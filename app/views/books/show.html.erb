@@ -25,6 +25,40 @@
             <th>introduction</th>
             <th><%= @users.introduction %></th>
           </tr>
+          <tr>
+            <th>follows</th>
+            <th>
+              <%= link_to following_user_path(@users) do %>
+              <%= @users.followers.count %>
+              <% end %>
+            </th>
+          </tr>
+          <tr>
+            <th>followers</th>
+            <th>
+              <%= link_to followers_user_path(@users) do %>
+              <%= @users.followeds.count %>
+              <% end %>
+            </th>
+          </tr>
+          <tr>
+            <% unless current_user == @users %>
+              <% if current_user.following?(@users) %>
+                <th>
+                  <%= form_for(current_user.follower_relationships.find_by(followed_id: @users.id),html: { method: :delete },remote: true) do |f| %>
+                    <%= f.submit "フォロー外す", class: "btn btn-primary" %>
+                  <% end %>
+                </th>
+              <% else %>
+                <th>
+                  <%= form_for(current_user.follower_relationships.build, remote: true) do |f| %>
+                  <%= hidden_field_tag :followed_id, @users.id %>
+                  <%= f.submit "フォローする", class: "btn btn-primary" %>
+                  <% end %>
+                </th>
+              <% end %>
+            <% end %>
+          </tr>  
         </tbody>
       </table>
       <br>

@@ -28,6 +28,22 @@
             <th>introduction</th>
             <th><%= @user.introduction %></th>
           </tr>
+          <tr>
+            <th>follows</th>
+            <th>
+              <%= link_to following_user_path(@user) do %>
+              <%= @user.followers.count %>
+              <% end %>
+            </th>
+          </tr>
+          <tr>
+            <th>followers</th>
+            <th>
+             <%= link_to followers_user_path(@user) do %>
+             <%= @user.followeds.count %>
+             <% end %>
+            </th>
+          </tr>
         </tbody>
       </table>
       <br>
@@ -66,6 +82,27 @@
           <tr>
             <td><%= attachment_image_tag user, :profile_image, size: '40x40', fallback: "no_image.jpg" %></td>
             <td><%= user.name %></td>
+            <td>フォロー数:<%= user.followers.count %></td>
+            <td>フォロワー数:<%= user.followeds.count %></td>
+            <% if current_user == user %>
+             <td></td>
+            <% end %>
+            <% unless current_user == user %>
+              <% if current_user.following?(user) %>
+                <td>
+                  <%= form_for(current_user.follower_relationships.find_by(followed_id: user.id),html: { method: :delete },remote: true) do |f| %>
+                    <%= f.submit "フォロー外す", class: "btn" %>
+                  <% end %>
+                </td>
+              <% else %>
+                <td>
+                  <%= form_for(current_user.follower_relationships.build, remote: true) do |f| %>
+                  <%= hidden_field_tag :followed_id, user.id %>
+                  <%= f.submit "フォローする", class: "btn" %>
+                  <% end %>
+                </td>
+              <% end %>
+            <% end %>
             <td><%= link_to "Show", user_path(user.id) %></td>
           </tr>
           <% end %>
