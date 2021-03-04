@@ -34,4 +34,18 @@ class User < ApplicationRecord
 
   validates :name, uniqueness: true, length: { minimum: 2, maximum: 20 }
   validates :introduction, length: { maximum: 50 }
+  
+  def self.search(search,word)
+    if search == "matchs"
+      @user = User.where("name LIKE?","#{word}")
+    elsif search == "forward"
+      @user = User.where("name LIKE?","#{word}%")
+    elsif search == "backward"
+      @user = User.where("name LIKE?","%#{word}")
+    elsif search == "partical"
+      @user = User.where("name LIKE?","%#{word}%")
+    else
+      @user = User.all
+    end
+  end
 end
