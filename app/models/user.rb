@@ -16,8 +16,8 @@ class User < ApplicationRecord
 
   # 既にフォロー済みであれば、trueを返す
   def following?(other_user)
-    # self.followers.include?(other_user)
-    Relationship.find_by(followed_id: other_user.id, follower_id: self.id).present?
+    self.followers.include?(other_user)
+    # Relationship.find_by(followed_id: other_user.id, follower_id: self.id).present?
   end
 
   # ユーザーをフォローする
@@ -34,7 +34,7 @@ class User < ApplicationRecord
 
   validates :name, uniqueness: true, length: { minimum: 2, maximum: 20 }
   validates :introduction, length: { maximum: 50 }
-  
+
   def self.search(search,word)
     if search == "matchs"
       @user = User.where("name LIKE?","#{word}")
